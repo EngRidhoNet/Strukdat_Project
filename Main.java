@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        ProsesApp prosesApp = new ProsesApp(); //membuat objek prosesApp
+        ProsesApp prosesApp = new ProsesApp(); // membuat objek prosesApp
         Scanner scanner = new Scanner(System.in);
         int choice, feature;
 
@@ -16,13 +16,22 @@ public class Main {
         System.out.println("\tTekan terserah untuk memulai program!!!");
         scanner.nextLine();
 
+        // Register
         System.out.println("\n\t===================================================================");
         System.out.println("\t=      Selamat Datang Aplikasi Pemesanan dan Pengiriman Barang     =");
         System.out.println("\t===================================================================");
-        System.out.println("\n\tSilahkan login terlebih dahulu! ");
+        System.out.println("\n\tSilahkan Register terlebih dahulu! ");
         System.out.println("\tPress Enter to continue...");
         scanner.nextLine();
-        prosesApp.head = prosesApp.loginAkun(prosesApp.head, scanner);
+        prosesApp.head = prosesApp.RegisterAkun(prosesApp.head, scanner);
+        // Login
+        System.out.println("\n\t===================================================================");
+        System.out.println("\t=      Selamat Datang Aplikasi Pemesanan dan Pengiriman Barang     =");
+        System.out.println("\t===================================================================");
+        System.out.println("\n\tSilahkan Login terlebih dahulu! ");
+        
+        
+        
 
         do {
             menu: System.out.println("\n\t====================================================");

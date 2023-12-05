@@ -1,0 +1,3 @@
+Kode Barang: 001, Nama Barang: Product A, Stock: 20
+Kode Barang: 002, Nama Barang: Product B, Stock: 15
+Kode Barang: 003, Nama Barang: Product C, Stock: 25
