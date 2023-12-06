@@ -21,6 +21,98 @@ public class ProsesApp {
             { 0, 0, 0, 0, 0, 0, 0, 0 }
     };
 
+    // menu
+    static void menu () {
+        int choice, feature;
+        Scanner scanner = new Scanner(System.in);
+        do {
+            menu: System.out.println("\n\t====================================================");
+            System.out.println("\t=                    Menu Fitur                    =");
+            System.out.println("\t====================================================");
+            System.out.println("\t1. Informasi Barang");
+            System.out.println("\t2. Informasi Pemesanan");
+            System.out.println("\t3. Informasi Akun & Graph");
+            System.out.println("\t4. Keluar");
+            System.out.println("\t====================================================");
+            System.out.print("\tMasukkan Pilihan Anda : ");
+            feature = scanner.nextInt();
+
+            if (feature == 1) {
+                System.out.println("\n\t====================================================");
+                System.out.println("\t=                    Menu Fitur                    =");
+                System.out.println("\t====================================================");
+                System.out.println("\t1. Tambah Barang");
+                System.out.println("\t2. Ubah Barang");
+                System.out.println("\t3. Lihat Barang");
+                System.out.println("\t4. Hapus Barang");
+                System.out.println("\t5. Lihat Detail Barang");
+                System.out.println("\t====================================================");
+                System.out.print("\tMasukkan Pilihan Anda : ");
+                choice = scanner.nextInt();
+                switch (choice) {
+                    case 1:
+                        tambahBarang(scanner);
+                        break;
+                    case 2:
+                        updateBarang(scanner);
+                        break;
+                    case 3:
+                        lihatBarang();
+                        break;
+                    case 4:
+                        hapusBarang(scanner);
+                        break;
+                    case 5:
+                        detailBarang(scanner);
+                        break;
+                }
+            } else if (feature == 2) {
+                System.out.println("\n\t====================================================");
+                System.out.println("\t=                    Menu Fitur                    =");
+                System.out.println("\t====================================================");
+                System.out.println("\t1.  Pemesanan Barang");
+                System.out.println("\t2.  Lihat Proses Pengiriman");
+                System.out.println("\t====================================================");
+                System.out.print("\tMasukkan Pilihan Anda : ");
+                choice = scanner.nextInt();
+                switch (choice) {
+                    case 1:
+                        tambahPemesanan(scanner);
+                        break;
+                    case 2:
+                        lihatPemesanan(graph);
+                        break;
+                }
+            } else if (feature == 3) {
+                System.out.println("\n\t====================================================");
+                System.out.println("\t=                    Menu Fitur                    =");
+                System.out.println("\t====================================================");
+                System.out.println("\t1.  Lihat Akun Saya\n ");
+                System.out.println("\t2.  Ubah Data Graph");
+                System.out.println("\t====================================================");
+                System.out.print("\tMasukkan Pilihan Anda : ");
+                choice = scanner.nextInt();
+                switch (choice) {
+                    case 1:
+                        lihatAkun(head);
+                        break;
+                    case 2:
+                        ubahGraph(graph, scanner);
+                        break;
+                }
+            } else if (feature == 4) {
+                simpanDataKeFile();
+                System.out.println("\n\tTerimakasih Telah Menggunakan Program ini!!!");
+                scanner.nextLine(); // Consume the newline character
+                System.exit(0);
+            } else {
+                System.out.println("\n\tMaaf Pilihan Fitur Tidak Tersedia, Silahkan Menginput Ulang!!!");
+                scanner.nextLine(); // Consume the newline character
+                break;
+            }
+        } while (feature != 4);
+    }
+
     // load data dari txt
     static void bacaDataDariFile() {
         bacaLoginDariFile();
@@ -188,7 +280,7 @@ public class ProsesApp {
         scanner.nextLine(); // Consume the newline character
 
         System.out.println("\n\t====================================================");
-        System.out.println("\t=                    LOGIN AKUN                    =");
+        System.out.println("\t=                    REGISTER AKUN                    =");
         System.out.println("\t====================================================");
         System.out.print("\tUSERNAME	: ");
         String username = scanner.nextLine();
@@ -207,28 +299,36 @@ public class ProsesApp {
     }
 
     static Login loginAkun(Login head, Scanner scanner) {
-        scanner.nextLine(); // Consume the newline character
+        while (true) {
+            scanner.nextLine(); // Consume the newline character
 
-        System.out.println("\n\t====================================================");
-        System.out.println("\t=                    LOGIN AKUN                    =");
-        System.out.println("\t====================================================");
+            System.out.println("\n\t====================================================");
+            System.out.println("\t=                    LOGIN AKUN                    =");
+            System.out.println("\t====================================================");
 
-        System.out.print("\tUSERNAME    : ");
-        String username = scanner.nextLine();
+            System.out.print("\tUSERNAME    : ");
+            String username = scanner.nextLine();
 
-        System.out.print("\tPASSWORD    : ");
-        String password = scanner.nextLine();
+            System.out.print("\tPASSWORD    : ");
+            String password = scanner.nextLine();
 
-        Login temp = head;
-        while (temp != null) {
-            if (temp.username.equals(username) && temp.password.equals(password)) {
-                System.out.println("\n\tAkun berhasil login!");
-                return temp;
+            Login temp = head;
+            while (temp != null) {
+                if (temp.username.equals(username) && temp.password.equals(password)) {
+                    System.out.println("\n\tAkun berhasil login!");
+                    menu(); // Menu utama
+                    return temp;
+                }
+                temp = temp.next;
             }
-            temp = temp.next;
-        }
 
-        System.out.println("\n\tAkun tidak ditemukan atau kombinasi username dan password salah!");
+            System.out.println("\n\tAkun tidak ditemukan atau kombinasi username dan password salah!");
+            System.out.println("\tCoba lagi? (Y/N)");
+            String choice = scanner.nextLine();
+            if (!choice.equalsIgnoreCase("Y")) {
+                break;
+            }
+        }
         return null;
     }
 

@@ -1,3 +1,0 @@
-Kode Pesanan: 1001, Nama Pemesan: John Doe, Kode Barang: 001, Nama Barang: Product A, Jumlah Pesanan: 5, Tanggal: 15, Bulan: 11, Tahun: 2023, Kota Asal: 0, Kota Tujuan: 2
-Kode Pesanan: 1002, Nama Pemesan: Jane Smith, Kode Barang: 002, Nama Barang: Product B, Jumlah Pesanan: 3, Tanggal: 20, Bulan: 11, Tahun: 2023, Kota Asal: 1, Kota Tujuan: 3
-Kode Pesanan: 1003, Nama Pemesan: David Johnson, Kode Barang: 003, Nama Barang: Product C, Jumlah Pesanan: 7, Tanggal: 25, Bulan: 11, Tahun: 2023, Kota Asal: 2, Kota Tujuan: 4

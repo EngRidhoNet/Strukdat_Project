@@ -1,3 +1,1 @@
-Username: user1, Password: pass123
-Username: user2, Password: abc456
-Username: user3, Password: mypassword
+Username: Ridho, Password: 12345
