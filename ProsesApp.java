@@ -1,5 +1,7 @@
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,7 +11,9 @@ public class ProsesApp {
     static Login head = null;
     static Barang headBarang = null;
     static Pemesanan headPemesanan = null;
-
+    Scanner scanner = new Scanner(System.in);
+    static String[] kota = { "Surabaya", "Sidoarjo", "Gresik", "Situbondo", "Madiun", "Magetan", "Malang",
+            "Mojokerto" };
     static int[][] graph = {
             { 0, 1, 0, 0, 0, 0, 0, 0 },
             { 0, 0, 2, 2, 3, 0, 0, 0 },
@@ -87,8 +91,9 @@ public class ProsesApp {
                 System.out.println("\n\t====================================================");
                 System.out.println("\t=                    Menu Fitur                    =");
                 System.out.println("\t====================================================");
-                System.out.println("\t1.  Lihat Akun Saya\n ");
+                System.out.println("\t1.  Lihat Akun Saya");
                 System.out.println("\t2.  Ubah Data Graph");
+                System.out.println("\t3.  Tambah Kota");
                 System.out.println("\t====================================================");
                 System.out.print("\tMasukkan Pilihan Anda : ");
                 choice = scanner.nextInt();
@@ -97,7 +102,13 @@ public class ProsesApp {
                         lihatAkun(head);
                         break;
                     case 2:
-                        ubahGraph(graph, scanner);
+                        ubahGraph(graph, scanner, kota);
+                        break;
+                    case 3:
+                        tambahKota(graph, kota);
+                        break;
+                    default:
+                        System.out.println("Pilihan tidak valid.");
                         break;
                 }
             } else if (feature == 4) {
@@ -118,6 +129,39 @@ public class ProsesApp {
         bacaLoginDariFile();
         bacaPemesananDariFile();
         bacaBarangDariFile();
+        bacaDataKotaDariFile(graph);
+    }
+
+    static void bacaDataKotaDariFile(int[][] graph) {
+        try {
+            FileReader fileReader = new FileReader("kota_info.txt");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+            int row = 0;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] data = line.split(":");
+                if (data.length >= 2) {
+                    String[] cities = data[0].trim().split("ke");
+                    String distanceString = data[1].trim().split(" ")[0];
+                    try {
+                        int distance = Integer.parseInt(distanceString);
+                        int city1 = Integer.parseInt(cities[0].trim().split(" ")[1]);
+                        int city2 = Integer.parseInt(cities[1].trim().split(" ")[1]);
+                        graph[city1][city2] = distance;
+                        graph[city2][city1] = distance;
+                        row++;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid distance value in line: " + line);
+                    }
+                } else {
+                    System.out.println("Invalid data format in line: " + line);
+                }
+            }
+            bufferedReader.close();
+            System.out.println("Data kota berhasil dibaca dan diperbarui pada graph.");
+        } catch (IOException e) {
+            System.out.println("Terjadi kesalahan saat membaca data kota dari file.");
+        }
     }
 
     static void bacaLoginDariFile() {
@@ -218,8 +262,24 @@ public class ProsesApp {
         simpanLoginKeFile();
         simpanBarangKeFile();
         simpanPemesananKeFile();
+        simpanDataKotaKeFile(graph);
     }
-
+    
+    static void simpanDataKotaKeFile(int[][] graph) {
+        try {
+            FileWriter fileWriter = new FileWriter("kota_info.txt");
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            int n = graph.length;
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    printWriter.println("Kota " + i + " ke Kota " + j + ": " + graph[i][j] + " KM");
+                }
+            }
+            printWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving city data to the file.");
+        }
+    }
     static void simpanLoginKeFile() {
         try {
             FileWriter fileWriter = new FileWriter("login_info.txt");
@@ -420,11 +480,9 @@ public class ProsesApp {
 
     static void lihatPemesanan(int[][] graph) {
         Pemesanan lihat;
-
         System.out.println("\n\t=============================================");
         System.out.println("\t         Lihat Proses Pemesanan Barang       ");
         System.out.println("\t=============================================");
-
         if (headPemesanan == null) {
             System.out.println(" Tidak Ada Proses Pemesanan Barang ");
         } else {
@@ -438,17 +496,14 @@ public class ProsesApp {
                 System.out.println("\tTanggal Pesan	: " + lihat.tanggal + "/" + lihat.bulan + "/" + lihat.tahun);
                 System.out.println("\tKota Asal	: " + getKota(lihat.kota_asal));
                 System.out.println("\tKota Tujuan	: " + getKota(lihat.kota_tujuan));
-
                 // Proses pengiriman menggunakan Algoritma Dijkstra
                 int[] distances = dijkstra(graph, lihat.kota_asal);
                 System.out.println("\n\tProses Pengiriman: ");
                 System.out.println("\t  " + getKota(lihat.kota_asal) + " -> " + getKota(lihat.kota_tujuan));
                 System.out.println("\t  Jarak Tempuh: " + distances[lihat.kota_tujuan] + " KM");
-
                 lihat = lihat.next;
             }
         }
-
         Scanner scanner = new Scanner(System.in);
         System.out.println("\tPress Enter to continue...");
         scanner.nextLine(); // Consume the newline character
@@ -646,22 +701,18 @@ public class ProsesApp {
         scanner.nextLine(); // Consume the newline character
     }
 
-    static void ubahGraph(int[][] graph, Scanner scanner) {
+    static int[][] ubahGraph(int[][] graph, Scanner scanner, String[] kota) {
         int kotaAwal, kotaTujuan, jarakBaru;
-        String[] kota = { "Surabaya", "Malang", "Magetan", "Pacitan", "Situbondo" };
-
         System.out.println("\t=============================================");
         System.out.println("\t=          Update Data Jarak Antar Kota      =");
         System.out.println("\t=============================================");
-
-        System.out.print("\tPilih Kota yang Ingin di Rubah Jaraknya\n");
+        System.out.println("\tPilih Kota yang Ingin di Rubah Jaraknya\n");
         for (int i = 0; i < kota.length; i++) {
             System.out.println("\n\t" + i + ". " + kota[i]);
         }
         System.out.print("\tMasukkan Kota: ");
         kotaAwal = scanner.nextInt();
         scanner.nextLine(); // consume the newline character
-
         System.out.println("\n\tKota " + kota[kotaAwal] + " ke Kota? : ");
         for (int i = 0; i < kota.length; i++) {
             System.out.println("\n\t" + i + ". " + kota[i]);
@@ -669,13 +720,53 @@ public class ProsesApp {
         System.out.print("\tMasukkan Kota: ");
         kotaTujuan = scanner.nextInt();
         scanner.nextLine(); // consume the newline character
-
         System.out.print("\tMasukkan Jarak yang Baru: ");
         jarakBaru = scanner.nextInt();
         scanner.nextLine(); // consume the newline character
-
         graph[kotaAwal][kotaTujuan] = jarakBaru;
+        graph[kotaTujuan][kotaAwal] = jarakBaru;
         System.out.println("\n\tJarak " + kota[kotaAwal] + " ke " + kota[kotaTujuan] + " yang baru adalah "
-                + jarakBaru * 100 + " Km");
+                + jarakBaru + " KM");
+        return graph;
+    }
+    
+    static void tambahKota(int[][] graph,  String [] kota) {
+        int jarakBaru;
+        String namaKotaBaru = "";
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\t=============================================");
+        System.out.println("\t=            Tambah Data Kota                =");
+        System.out.println("\t=============================================");
+        System.out.print("\tMasukkan Nama Kota Baru: ");
+        namaKotaBaru = scanner.nextLine();
+
+        int indexKotaBaru = kota.length;
+        String[] newKota = new String[indexKotaBaru + 1];
+        System.arraycopy(kota, 0, newKota, 0, indexKotaBaru);
+        newKota[indexKotaBaru] = namaKotaBaru;
+        kota = newKota;
+
+        int[][] newGraph = new int[indexKotaBaru + 1][indexKotaBaru + 1];
+        for (int i = 0; i < indexKotaBaru; i++) {
+            System.arraycopy(graph[i], 0, newGraph[i], 0, indexKotaBaru);
+        }
+        for (int i = 0; i < indexKotaBaru + 1; i++) {
+            newGraph[i][indexKotaBaru] = 0;
+            newGraph[indexKotaBaru][i] = 0;
+        }
+
+        // Tambah jarak antara kota baru dan kota yang sudah ada
+        scanner.nextLine(); // Membersihkan karakter newline di buffer
+        for (int i = 0; i < indexKotaBaru; i++) {
+            System.out.print("\tMasukkan jarak antara " + kota[i] + " dan " + namaKotaBaru + ": ");
+            jarakBaru = scanner.nextInt();
+            newGraph[i][indexKotaBaru] = jarakBaru;
+            newGraph[indexKotaBaru][i] = jarakBaru;
+            scanner.nextLine(); // Membersihkan karakter newline di buffer
+        }
+
+        graph = newGraph;
+
+        System.out.println("\n\tKota " + namaKotaBaru + " berhasil ditambahkan.");
     }
 }
