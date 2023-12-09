@@ -1,1 +1,2 @@
+Kode Pesanan: 1, Nama Pemesan: Elfa, Kode Barang: 2, Nama Barang: Laptop, Jumlah Pesanan: 200, Tanggal: 12, Bulan: 12, Tahun: 2023, Kota Asal: 13, Kota Tujuan: 13
 Kode Pesanan: 1, Nama Pemesan: Wafi, Kode Barang: 1, Nama Barang: hp, Jumlah Pesanan: 100, Tanggal: 6, Bulan: 12, Tahun: 2023, Kota Asal: 0, Kota Tujuan: 1

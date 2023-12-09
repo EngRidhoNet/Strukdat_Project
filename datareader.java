@@ -9,19 +9,72 @@ public class datareader {
     static final int MAX_CITIES = 100;
     static int[][] graph = new int[MAX_CITIES][MAX_CITIES];
     static int numCities = 0;
-    static String[] kota = { "Surabaya", "Sidoarjo", "Gresik", "Situbondo", "Madiun", "Magetan", "Malang",
-            "Mojokerto" };
+    static String[] kota = new String[MAX_CITIES];
 
     public static void main(String[] args) {
-        bacaDataKotaDariFile();
+        // bacaDataKotaDariFile();
 
+        // tambahKota(graph, kota);
+        // // Menggunakan numCities sebagai batas
+        // for (int i = 0; i < numCities; i++) {
+        // for (int j = 0; j < numCities; j++) {
+        // // Menampilkan keterangan jarak dari kota i ke kota j
+        // System.out.println("Jarak dari Kota " + i + " ke Kota " + j + " = " +
+        // graph[i][j]);
+        // }
+        // }
+        bacaDataNamaKota();
+        tampilkanDataKota();
         tambahKota(graph, kota);
-        // Menggunakan numCities sebagai batas
+        tampilkanDataKota();
+        simpanDataNamaKota();
+    }
+
+    static void tampilkanDataKota() {
+        System.out.println("Data Nama Kota:");
         for (int i = 0; i < numCities; i++) {
-            for (int j = 0; j < numCities; j++) {
-                // Menampilkan keterangan jarak dari kota i ke kota j
-                System.out.println("Jarak dari Kota " + i + " ke Kota " + j + " = " + graph[i][j]);
+            System.out.println("Kota " + i + ": " + kota[i]);
+        }
+    }
+
+    static void simpanDataNamaKota() {
+        try {
+            FileWriter fileWriter = new FileWriter("kota_nama.txt");
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            for (int i = 0; i < numCities; i++) {
+                printWriter.println(i + " -> " + kota[i]);
             }
+            printWriter.close();
+            System.out.println("Data nama kota berhasil disimpan ke file.");
+        } catch (IOException e) {
+            System.out.println("Terjadi kesalahan saat menyimpan data nama kota ke file.");
+        }
+    }
+
+    static void bacaDataNamaKota() {
+        try {
+            FileReader fileReader = new FileReader("kota_nama.txt");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] parts = line.split(" -> ");
+                if (parts.length == 2) {
+                    int index = Integer.parseInt(parts[0].trim());
+                    String cityName = parts[1].trim();
+                    if (index >= 0 && index < MAX_CITIES) {
+                        kota[index] = cityName;
+                        numCities = Math.max(numCities, index + 1);
+                    } else {
+                        throw new IllegalArgumentException("Invalid index in line: " + line);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Invalid data format in line: " + line);
+                }
+            }
+            bufferedReader.close();
+            System.out.println("Data nama kota berhasil dibaca.");
+        } catch (IOException e) {
+            System.out.println("Terjadi kesalahan saat membaca data nama kota dari file: " + e.getMessage());
         }
     }
 
@@ -81,28 +134,20 @@ public class datareader {
         System.out.println("\t=============================================");
         System.out.print("\tMasukkan Nama Kota Baru: ");
         namaKotaBaru = scanner.nextLine();
-        int indexKotaBaru = numCities;
-        String[] newKota = new String[MAX_CITIES];
-        System.arraycopy(kota, 0, newKota, 0, kota.length);
-        newKota[indexKotaBaru] = namaKotaBaru;
-        kota = newKota;
-        int[][] newGraph = new int[indexKotaBaru + 1][indexKotaBaru + 1];
-        // Copy the values from the existing graph to the newGraph
-        for (int i = 0; i < indexKotaBaru; i++) {
-            for (int j = 0; j < indexKotaBaru; j++) {
-                newGraph[i][j] = graph[i][j];
-            }
-        }
-        // Tambah jarak antara kota baru dan kota yang sudah ada
-        for (int i = 0; i < indexKotaBaru; i++) {
+
+        // Update the arrays with new city data
+        kota[numCities] = namaKotaBaru;
+
+        for (int i = 0; i <= numCities; i++) {
             System.out.print("\tMasukkan jarak antara " + kota[i] + " dan " + namaKotaBaru + ": ");
             jarakBaru = scanner.nextInt();
-            newGraph[i][indexKotaBaru] = jarakBaru;
-            newGraph[indexKotaBaru][i] = jarakBaru;
+            graph[i][numCities] = jarakBaru;
+            graph[numCities][i] = jarakBaru;
         }
+
         // Tambah jarak antara kota baru dengan dirinya sendiri
-        newGraph[indexKotaBaru][indexKotaBaru] = 0;
-        graph = newGraph;
+        graph[numCities][numCities] = 0;
+
         numCities++;
         System.out.println("\n\tKota " + namaKotaBaru + " berhasil ditambahkan.");
         simpanDataKotaKeFile(graph, numCities); // Save the updated graph to the file

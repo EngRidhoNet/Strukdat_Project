@@ -14,9 +14,8 @@ public class ProsesApp {
     static Barang headBarang = null;
     static Pemesanan headPemesanan = null;
     Scanner scanner = new Scanner(System.in);
-    static String[] kota = { "Surabaya", "Sidoarjo", "Gresik", "Situbondo", "Madiun", "Magetan", "Malang",
-            "Mojokerto" };
     static final int MAX_CITIES = 100;
+    static String[] kota = new String[MAX_CITIES];
     static int[][] graph = new int[MAX_CITIES][MAX_CITIES];
     static int numCities = 0;
     static int jumlahDataKota = 0;
@@ -127,6 +126,7 @@ public class ProsesApp {
         bacaLoginDariFile();
         bacaPemesananDariFile();
         bacaBarangDariFile();
+        bacaDataNamaKota();
         bacaDataKotaDariFile(graph);
     }
     
@@ -137,6 +137,33 @@ public class ProsesApp {
                 // Menampilkan keterangan jarak dari kota i ke kota j
                 System.out.println("Jarak dari Kota " + i + " ke Kota " + j + " = " + graph[i][j]);
             }
+        }
+    }
+
+    static void bacaDataNamaKota() {
+        try {
+            FileReader fileReader = new FileReader("kota_nama.txt");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] parts = line.split(" -> ");
+                if (parts.length == 2) {
+                    int index = Integer.parseInt(parts[0].trim());
+                    String cityName = parts[1].trim();
+                    if (index >= 0 && index < MAX_CITIES) {
+                        kota[index] = cityName;
+                        numCities = Math.max(numCities, index + 1);
+                    } else {
+                        throw new IllegalArgumentException("Invalid index in line: " + line);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Invalid data format in line: " + line);
+                }
+            }
+            bufferedReader.close();
+            System.out.println("Data nama kota berhasil dibaca.");
+        } catch (IOException e) {
+            System.out.println("Terjadi kesalahan saat membaca data nama kota dari file: " + e.getMessage());
         }
     }
 
@@ -287,6 +314,21 @@ public class ProsesApp {
         simpanBarangKeFile();
         simpanPemesananKeFile();
         simpanDataKotaKeFile(graph,numCities);
+        simpanDataNamaKota();
+    }
+
+    static void simpanDataNamaKota() {
+        try {
+            FileWriter fileWriter = new FileWriter("kota_nama.txt");
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            for (int i = 0; i < numCities; i++) {
+                printWriter.println(i + " -> " + kota[i]);
+            }
+            printWriter.close();
+            System.out.println("Data nama kota berhasil disimpan ke file.");
+        } catch (IOException e) {
+            System.out.println("Terjadi kesalahan saat menyimpan data nama kota ke file.");
+        }
     }
 
     static void simpanDataKotaKeFile(int[][] graph, int numCities) {
@@ -450,59 +492,50 @@ public class ProsesApp {
 
     static void tambahPemesanan(Scanner scanner) {
         scanner.nextLine(); // Consume the newline character
-
         System.out.println("\t=============================================");
         System.out.println("\t            Buat Pemesanan Barang            ");
         System.out.println("\t=============================================");
-        System.out.print("\tKode Pesanan	: ");
+        System.out.print("\tKode Pesanan   : ");
         int kodpes = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
-        System.out.print("\tNama Pemesan	: ");
+        System.out.print("\tNama Pemesan   : ");
         String nampes = scanner.nextLine();
-        System.out.print("\tKode Barang	: ");
+        System.out.print("\tKode Barang    : ");
         int kodbarpes = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
-        System.out.print("\tNama Barang	: ");
+        System.out.print("\tNama Barang    : ");
         String nambar = scanner.nextLine();
-        System.out.print("\tJumlah Pesanan	: ");
+        System.out.print("\tJumlah Pesanan : ");
         int jumpes = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
-        System.out.print("\tTanggal     	: ");
+        System.out.print("\tTanggal        : ");
         int tgl = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
-        System.out.print("\tBulan      	: ");
+        System.out.print("\tBulan          : ");
         int bln = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
-        System.out.print("\tTahun      	: ");
+        System.out.print("\tTahun          : ");
         int thn = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
+
         System.out.println("\tKota Asal: ");
-        System.out.println("\n\t0. Surabaya");
-        System.out.println("\t1. Sidoarjo");
-        System.out.println("\t2. Gresik");
-        System.out.println("\t3. Situbondo");
-        System.out.println("\t4. Madiun ");
-        System.out.println("\t5. Magetan ");
-        System.out.println("\t6. Malang ");
-        System.out.println("\t7. Mojokerto ");
+        for (int i = 0; i < numCities; i++) {
+            System.out.println("\t" + i + ". " + kota[i]);
+        }
         System.out.print("\tPilih Kota Asal : ");
         int asal = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
-        System.out.println("\tKota Tujuan");
-        System.out.println("\n\t0. Surabaya");
-        System.out.println("\t1. Sidoarjo");
-        System.out.println("\t2. Gresik");
-        System.out.println("\t3. Situbondo");
-        System.out.println("\t4. Madiun ");
-        System.out.println("\t5. Magetan ");
-        System.out.println("\t6. Malang ");
-        System.out.println("\t7. Mojokerto ");
+
+        System.out.println("\tKota Tujuan: ");
+        for (int i = 0; i < numCities; i++) {
+            System.out.println("\t" + i + ". " + kota[i]);
+        }
         System.out.print("\tPilih Kota Tujuan : ");
         int tujuan = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
 
         masukPemesanan(kodpes, kodbarpes, jumpes, tgl, bln, thn, nampes, nambar, tujuan, asal);
 
-        scanner.nextLine(); // Consume the newline character
         System.out.println("\tPress Enter to continue...");
         scanner.nextLine(); // Consume the newline character
     }
@@ -539,8 +572,11 @@ public class ProsesApp {
     }
 
     static String getKota(int kotaCode) {
-        String[] kota = { "Surabaya", "Sidoarjo", "Gresik", "Situbondo", "Madiun", "Magetan", "Malang", "Mojokerto" };
-        return kota[kotaCode];
+        if (kotaCode >= 0 && kotaCode < numCities) {
+            return kota[kotaCode];
+        } else {
+            return "Invalid Kota Code";
+        }
     }
 
     static int[] dijkstra(int[][] graph, int startNode) {
@@ -768,28 +804,20 @@ public class ProsesApp {
         System.out.println("\t=============================================");
         System.out.print("\tMasukkan Nama Kota Baru: ");
         namaKotaBaru = scanner.nextLine();
-        int indexKotaBaru = numCities;
-        String[] newKota = new String[MAX_CITIES];
-        System.arraycopy(kota, 0, newKota, 0, kota.length);
-        newKota[indexKotaBaru] = namaKotaBaru;
-        kota = newKota;
-        int[][] newGraph = new int[indexKotaBaru + 1][indexKotaBaru + 1];
-        // Copy the values from the existing graph to the newGraph
-        for (int i = 0; i < indexKotaBaru; i++) {
-            for (int j = 0; j < indexKotaBaru; j++) {
-                newGraph[i][j] = graph[i][j];
-            }
-        }
-        // Tambah jarak antara kota baru dan kota yang sudah ada
-        for (int i = 0; i < indexKotaBaru; i++) {
+
+        // Update the arrays with new city data
+        kota[numCities] = namaKotaBaru;
+
+        for (int i = 0; i <= numCities; i++) {
             System.out.print("\tMasukkan jarak antara " + kota[i] + " dan " + namaKotaBaru + ": ");
             jarakBaru = scanner.nextInt();
-            newGraph[i][indexKotaBaru] = jarakBaru;
-            newGraph[indexKotaBaru][i] = jarakBaru;
+            graph[i][numCities] = jarakBaru;
+            graph[numCities][i] = jarakBaru;
         }
+
         // Tambah jarak antara kota baru dengan dirinya sendiri
-        newGraph[indexKotaBaru][indexKotaBaru] = 0;
-        graph = newGraph;
+        graph[numCities][numCities] = 0;
+
         numCities++;
         System.out.println("\n\tKota " + namaKotaBaru + " berhasil ditambahkan.");
         simpanDataKotaKeFile(graph, numCities); // Save the updated graph to the file

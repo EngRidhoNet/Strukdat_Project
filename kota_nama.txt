@@ -6,3 +6,9 @@
 5 -> Magetan
 6 -> Malang
 7 -> Mojokerto
+8 -> Jember
+9 -> Sumenep
+10 -> Nganjuk
+11 -> Ponorogo
+12 -> Demak
+13 -> Bangkalan
