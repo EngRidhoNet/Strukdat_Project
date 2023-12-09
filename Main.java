@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
         ProsesApp prosesApp = new ProsesApp(); // membuat objek prosesApp
         Scanner scanner = new Scanner(System.in);

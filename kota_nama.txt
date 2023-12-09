@@ -1,0 +1,8 @@
+0 -> Surabaya
+1 -> Sidoarjo
+2 -> Gresik
+3 -> Situbondo
+4 -> Madiun
+5 -> Magetan
+6 -> Malang
+7 -> Mojokerto
